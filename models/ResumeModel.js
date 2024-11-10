@@ -1,0 +1,57 @@
+const mongoose = require("mongoose");
+const User = require("./User");
+
+const resumeSchema = new mongoose.Schema({
+  resumeTitle: {
+    type: String,
+    required: true,
+  },
+  jobTitle: {
+    type: String,
+    required: true,
+  },
+  jobDescription: {
+    type: String,
+    required: true,
+  },
+  userFullName: {
+    type: String,
+    required: true,
+  },
+  userEmailAddress: {
+    type: String,
+    required: true,
+  },
+  userPhoneNumber: {
+    type: String,
+    required: true,
+  },
+  userWebsite: {
+    type: String,
+    required: false,
+  },
+  userAddress: {
+    type: String,
+    required: false,
+  },
+  userDegree: {
+    type: Array,
+    required: false,
+  },
+  userLanguage: {
+    type: Array,
+    required: true,
+  },
+  jobExperience: {
+    type: Array,
+    required: true,
+  },
+  imageUrl: {
+    type: String,
+    required: false,
+  },
+});
+
+const Resume = mongoose.model("Resume", resumeSchema);
+
+module.exports = Resume;
