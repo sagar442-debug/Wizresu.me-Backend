@@ -4,8 +4,8 @@ const ImageCompressor = async (bufferFile) => {
   try {
     const compressedImage = await sharp(bufferFile)
       .png({
-        quality: 70,
-        compressionLevel: 9,
+        quality: 90,
+        compressionLevel: 4,
       })
       .toBuffer();
     return compressedImage;

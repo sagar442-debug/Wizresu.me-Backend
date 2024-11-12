@@ -11,8 +11,8 @@ const SaveResumePhoto = async (req, res) => {
     // Creating params for the bucket inorder to upload the file with correct info and properties
     const params = {
       Bucket: bucketName,
-      Key: randomImageName(),
-      Body: req.file.buffer,
+      Key: randomImageName() + ".png",
+      Body: compressedImage,
       ContentType: req.file.mimeType,
     };
 
