@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema(
     },
     subscription: {
       type: String,
-      required: true,
+      required: false,
+      default: "Basic",
     },
     resumes: {
       type: [String],
