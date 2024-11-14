@@ -2,15 +2,6 @@ const User = require("../models/User");
 
 const UserSave = async (req, res) => {
   const { id, first_name, last_name, image_url, email_addresses } = req.body;
-  const newUser = new User({
-    clerkId: id,
-    name: first_name + " " + last_name,
-    email: email_addresses,
-    avatar: image_url,
-    subscription,
-    resumes,
-  });
-
   try {
     const user = await User.findOneAndUpdate(
       { clerkId: id },

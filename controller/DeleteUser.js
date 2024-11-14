@@ -5,8 +5,9 @@ const Deleteuser = async (req, res) => {
   try {
     await connect();
     await User.findOneAndDelete({ clerkId: id });
+    res.status(200).json({ message: "User deleted successfull" });
   } catch (error) {
-    console.log("Error deleting the user", error);
+    res.status(400).json({ message: "Deletion of user unsuccessful", error });
   }
 };
 
