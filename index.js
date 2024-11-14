@@ -23,7 +23,10 @@ app.post(
   clerkWebhookHandler
 );
 
-app.get("/", (req, res) => res.send("Express on Vercel"));
+app.get("/", (req, res) =>
+  res.json({ message: "The api is working for Wizresu.me backend" })
+);
+
 app.listen(process.env.PORT || 5000, () =>
   console.log("Server is running on port 5000")
 );
