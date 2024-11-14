@@ -1,7 +1,8 @@
 const resumeModel = require("../models/ResumeModel");
-
+const User = require("../models/User");
 const saveResume = async (req, res) => {
   const {
+    userId,
     resumeTitle,
     jobTitle,
     jobDescription,
@@ -15,7 +16,12 @@ const saveResume = async (req, res) => {
     jobExperience,
   } = req.body;
   try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     const newResume = new resumeModel({
+      userId,
       resumeTitle,
       jobTitle,
       jobDescription,
@@ -30,7 +36,11 @@ const saveResume = async (req, res) => {
     });
 
     await newResume.save();
-    res.status(201).json({ message: "Resume saved successfully!" });
+    user.resumes.push(newResume._id);
+    await user.save();
+    res
+      .status(201)
+      .json({ message: "Resume saved successfully!", id: newResume._id });
   } catch (error) {
     if ((error.name = "Validation Error")) {
       const errors = Object.values(error.errors).map((err) => err.message);

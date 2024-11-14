@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const User = require("./User");
 
 const resumeSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
   resumeTitle: {
     type: String,
     required: true,
@@ -46,7 +50,7 @@ const resumeSchema = new mongoose.Schema({
     type: Array,
     required: true,
   },
-  imageUrl: {
+  imageName: {
     type: String,
     required: false,
   },
