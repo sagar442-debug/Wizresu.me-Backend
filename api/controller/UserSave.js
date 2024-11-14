@@ -1,25 +1,40 @@
 const User = require("../models/User");
 
-const UserSave = async (req, res) => {
-  const { id, first_name, last_name, image_url, email_addresses } = req.body;
+const UserSave = async ({
+  id,
+  first_name,
+  last_name,
+  image_url,
+  email_addresses,
+}) => {
   try {
-    const user = await User.findOneAndUpdate(
-      { clerkId: id },
-      {
-        $set: {
-          name: first_name + " " + last_name,
-          avatar: image_url,
-          email: email_addresses[0].email,
-        },
-      },
-      {
-        new: true,
-        upsert: true,
-      }
-    );
-    res.statu(200).json({ message: "User saved successfully", user });
+    // Check if the user already exists by clerkId
+    let user = await User.findOne({ clerkId: id });
+
+    if (user) {
+      // User exists, update the user record
+      user.name = first_name + " " + last_name;
+      user.avatar = image_url;
+      user.email = email_addresses[0]?.email;
+
+      // Save the updated user
+      await user.save();
+      console.log("User updated successfully", user);
+    } else {
+      // User doesn't exist, create a new user
+      user = new User({
+        clerkId: id,
+        name: first_name + " " + last_name,
+        avatar: image_url,
+        email: email_addresses[0]?.email,
+      });
+
+      await user.save();
+      console.log("User created successfully", user);
+    }
   } catch (error) {
-    res.send("There was an error: ", error.message);
+    console.error("Error saving user:", error.message);
+    throw error; // Re-throw error for the webhook handler to catch
   }
 };
 
