@@ -2,7 +2,7 @@ const resumeModel = require("../models/ResumeModel");
 const User = require("../models/User");
 const saveResume = async (req, res) => {
   const {
-    userId,
+    clerkId,
     resumeTitle,
     jobTitle,
     jobDescription,
@@ -16,12 +16,12 @@ const saveResume = async (req, res) => {
     jobExperience,
   } = req.body;
   try {
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ clerkId: clerkId });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     const newResume = new resumeModel({
-      userId,
+      clerkId,
       resumeTitle,
       jobTitle,
       jobDescription,

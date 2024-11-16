@@ -11,9 +11,10 @@ const cors = require("cors");
 dotenv.config();
 
 const app = express();
+
+// app.use(express.json());
 app.use(bodyParser.raw({ type: "application/json" }));
 app.use(cors());
-app.use(express.json());
 const port = process.env.PORT || 3000;
 connectDB();
 app.use("/api/users", userRoutes);

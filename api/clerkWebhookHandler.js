@@ -41,17 +41,37 @@ const clerkWebhookHandler = async (req, res) => {
 
   if (eventType === "user.created" || eventType === "user.updated") {
     const { id, first_name, last_name, image_url, email_addresses } = evt?.data;
+
     try {
-      await UserSave({
+      // Log the incoming data to verify that it's coming through correctly
+      console.log("User data:", {
         id,
         first_name,
         last_name,
         image_url,
         email_addresses,
       });
-      return res
-        .status(200)
-        .json({ message: "User created or updated successfully" });
+
+      // Proceed with saving or updating the user
+      const userSaved = await UserSave({
+        id,
+        first_name,
+        last_name,
+        image_url,
+        email_addresses,
+      });
+
+      if (userSaved) {
+        console.log(`User ${id} saved or updated successfully.`);
+        return res
+          .status(200)
+          .json({ message: "User created or updated successfully" });
+      } else {
+        console.error(`Failed to save or update user ${id}`);
+        return res
+          .status(400)
+          .json({ message: "Failed to save or update user" });
+      }
     } catch (error) {
       console.log("Error creating or updating user", error);
       return res

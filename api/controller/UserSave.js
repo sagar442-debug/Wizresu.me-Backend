@@ -9,13 +9,13 @@ const UserSave = async ({
 }) => {
   try {
     // Check if the user already exists by clerkId
-    let user = await User.findOne({ clerkId: id });
+    let user = await User.findOne({ email: email_addresses[0].email_address });
 
     if (user) {
       // User exists, update the user record
       user.name = first_name + " " + last_name;
       user.avatar = image_url;
-      user.email = email_addresses[0]?.email;
+      user.email = email_addresses[0]?.email_address;
 
       // Save the updated user
       await user.save();
@@ -26,7 +26,7 @@ const UserSave = async ({
         clerkId: id,
         name: first_name + " " + last_name,
         avatar: image_url,
-        email: email_addresses[0]?.email,
+        email: email_addresses[0]?.email_address,
       });
 
       await user.save();
