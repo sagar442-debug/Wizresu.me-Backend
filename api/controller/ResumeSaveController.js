@@ -16,7 +16,7 @@ const saveResume = async (req, res) => {
     jobExperience,
   } = req.body;
   try {
-    const user = await User.findOne({ clerkId: clerkId });
+    const user = await User.findOne({ clerkId });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
