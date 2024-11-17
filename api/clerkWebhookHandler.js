@@ -9,20 +9,17 @@ const clerkWebhookHandler = async (req, res) => {
   }
 
   const headers = req.headers;
+  const payload = req.body;
+
   const svix_id = headers["svix-id"];
   const svix_timestamp = headers["svix-timestamp"];
   const svix_signature = headers["svix-signature"];
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return void res.status(400).json({
-      success: false,
-      message: "Error: Missing svix headers",
-    });
+    return res.status(400).json({ message: "Missing Svix headers" });
   }
 
-  const payload = req.body; // Convert Buffer to string
   const webhook = new Webhook(WEBHOOK_SECRET);
-
   let evt;
 
   try {
@@ -32,50 +29,74 @@ const clerkWebhookHandler = async (req, res) => {
       "svix-signature": svix_signature,
     });
   } catch (err) {
-    console.log("Error: Could not verify webhook:", err.message);
-    return void res.status(400).json({
-      success: false,
-      message: err.message,
-    });
+    console.log("Error verifying webhook:", err.message);
+    return res
+      .status(400)
+      .json({ message: "Webhook verification failed", error: err.message });
   }
 
+  const { id } = evt.data;
   const eventType = evt.type;
+  console.log(`Received webhook with ID: ${id}, Event type: ${eventType}`);
 
   if (eventType === "user.created" || eventType === "user.updated") {
-    const { id, first_name, last_name, email_addresses, image_url } = evt.data;
+    const { id, first_name, last_name, image_url, email_addresses } = evt?.data;
 
     try {
-      await UserSave({
+      // Log the incoming data to verify that it's coming through correctly
+      console.log("User data:", {
         id,
         first_name,
         last_name,
-        email_addresses,
         image_url,
+        email_addresses,
       });
+
+      // Proceed with saving or updating the user
+      const userSaved = await UserSave({
+        id,
+        first_name,
+        last_name,
+        image_url,
+        email_addresses,
+      });
+
+      if (userSaved) {
+        console.log(`User ${id} saved or updated successfully.`);
+        return res
+          .status(200)
+          .json({ message: "User created or updated successfully" });
+      } else {
+        console.error(`Failed to save or update user ${id}`);
+        return res
+          .status(400)
+          .json({ message: "Failed to save or update user" });
+      }
+    } catch (error) {
+      console.log("Error creating or updating user", error);
       return res
-        .status(200)
-        .json({ message: "User created or updated successfully" });
-    } catch (err) {
-      console.error("Error saving/updating user:", err);
-      return res
-        .status(500)
-        .json({ message: "Error saving/updating user", error: err.message });
+        .status(400)
+        .json({ message: "Error while creating or updating user", error });
     }
   }
 
   if (eventType === "user.deleted") {
+    const { id } = evt?.data;
     try {
-      await Deleteuser(evt.data.id);
+      await Deleteuser(id);
       return res.status(200).json({ message: "User deleted successfully" });
-    } catch (err) {
-      console.error("Error deleting user:", err);
+    } catch (error) {
+      console.log("Error while deleting user", error);
       return res
-        .status(500)
-        .json({ message: "Error deleting user", error: err.message });
+        .status(400)
+        .json({ message: "Error while deleting user", error });
     }
   }
 
-  return res.status(200).json({ message: "Webhook processed successfully" });
+  return res.status(200).json({
+    success: true,
+    message: "Webhook received and processed successfully",
+  });
 };
 
 module.exports = clerkWebhookHandler;

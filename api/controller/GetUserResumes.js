@@ -2,7 +2,6 @@ const User = require("../models/User");
 
 const getUserDetails = async (req, res) => {
   const { clerkId } = req.query;
-  console.log(clerkId);
   try {
     const user = await User.findOne({ clerkId });
     if (!user) {
