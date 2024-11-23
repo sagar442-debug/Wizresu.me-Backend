@@ -23,6 +23,8 @@ const saveResume = async (req, res) => {
     const newResume = new resumeModel({
       clerkId,
       resumeTitle,
+      objective,
+      skills,
       jobTitle,
       jobDescription,
       userFullName,

@@ -14,10 +14,10 @@ const StripeSetup = async (req, res) => {
 
     // Check the subscription type and use the appropriate Price ID
     let priceId;
-    if (subscriptionId === "professional") {
-      priceId = "price_1QMngCP0VMA4utUdYpZS8oL8"; // Replace with the Price ID for Professional Subscription
-    } else if (subscriptionId === "premium") {
-      priceId = "price_1QMnfPP0VMA4utUdaHvWHy7s"; // Replace with the Price ID for the Basic Subscription
+    if (subscriptionId == process.env.PROFESSIONAL_PRICE) {
+      priceId = process.env.PROFESSIONAL_PRICE; // Replace with the Price ID for Professional Subscription
+    } else if (subscriptionId == process.env.PREMIUM_PRICE) {
+      priceId = process.env.PREMIUM_PRICE; // Replace with the Price ID for the Basic Subscription
     } else {
       return res.status(400).json({ error: "Invalid subscription type" });
     }
@@ -32,6 +32,7 @@ const StripeSetup = async (req, res) => {
       line_items: [lineItem],
       mode: "subscription", // Use subscription mode
       customer_email: userEmail,
+      allow_promotion_codes: true,
       success_url: `${frontendUrl}`,
       cancel_url: `${frontendUrl}`,
     });

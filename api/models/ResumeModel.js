@@ -22,6 +22,10 @@ const resumeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  objective: {
+    type: String,
+    require: true,
+  },
   userEmailAddress: {
     type: String,
     required: true,
@@ -47,6 +51,10 @@ const resumeSchema = new mongoose.Schema({
     required: true,
   },
   jobExperience: {
+    type: Array,
+    required: true,
+  },
+  skills: {
     type: Array,
     required: true,
   },
