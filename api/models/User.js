@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       default: "Basic",
     },
     resumes: {
-      type: [String],
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resume" }],
       default: [],
     },
     avatar: {
