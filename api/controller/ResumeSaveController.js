@@ -48,7 +48,10 @@ const saveResume = async (req, res) => {
     await newResume.save();
 
     // Add the resume ID to the user's resumes array
-    user.resumes.push(newResume._id);
+    user.resumes.push({
+      id: newResume._id,
+      createdAt: new Date().toISOString(),
+    });
     await user.save();
 
     // Respond with success
