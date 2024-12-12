@@ -6,7 +6,6 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
-// Use express.raw middleware only for the webhook route
 app.post("/webhook", async (req, res) => {
   const sig = req.headers["stripe-signature"];
   const payload = req.body;
@@ -30,6 +29,21 @@ app.post("/webhook", async (req, res) => {
       }
 
       user.subscription = lines;
+      await user.save();
+    }
+    if (event.type == "customer.subscription.deleted") {
+      const session = event.data.object;
+      const user = await User.findOne({
+        email: session.customer_email,
+      });
+      const lines = event.data.object.lines.data[0].price.id;
+      console.log(lines);
+      if (!user) {
+        res.status(404).json({ message: "No user found!" });
+        return;
+      }
+
+      user.subscription = "Basic";
       await user.save();
     }
 
