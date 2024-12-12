@@ -22,10 +22,12 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: "Basic",
     },
-    resumes: {
-      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resume" }],
-      default: [],
-    },
+    resumes: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Resume" },
+        createdAt: { type: Date, default: Date.now },
+      },
+    ],
     avatar: {
       type: String,
       required: false,

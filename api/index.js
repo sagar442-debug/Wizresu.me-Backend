@@ -23,15 +23,14 @@ app.post(
   bodyParser.raw({ type: "application/json" }),
   clerkWebhookHandler
 );
-
 app.use(
   "/api/stripe-webhook",
   bodyParser.raw({ type: "application/json" }),
   StripeWebhook
 );
-
 app.use("/api/stripe", stripeRoute);
 app.use(express.json());
+
 app.use("/api/users", userRoutes);
 app.use("/api/resume", resumeRoutes);
 
