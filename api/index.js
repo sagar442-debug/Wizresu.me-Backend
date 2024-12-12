@@ -30,10 +30,10 @@ app.use(
   StripeWebhook
 );
 
+app.use("/api/stripe", stripeRoute);
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/resume", resumeRoutes);
-app.use("/api/stripe", stripeRoute);
 
 app.get("/", (req, res) =>
   res.json({ message: "The api is working for Wizresu.me backend" })

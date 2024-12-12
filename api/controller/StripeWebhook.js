@@ -1,28 +1,35 @@
+const express = require("express");
 const Stripe = require("stripe");
 const User = require("../models/User");
 
-const StripeWebhook = async (req, res) => {
-  const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+
+const app = express();
+
+// Use express.raw middleware only for the webhook route
+app.post("/webhook", async (req, res) => {
   const sig = req.headers["stripe-signature"];
   const payload = req.body;
+
   try {
     const event = stripe.webhooks.constructEvent(
       payload,
       sig,
       process.env.STRIPE_WEBHOOK_SECRET
     );
-
-    // Handle events
-    if (event.type === "checkout.session.completed") {
+    if (event.type == "invoice.payment_succeeded") {
       const session = event.data.object;
       const user = await User.findOne({
-        email: session.customer_details.email,
+        email: session.customer_email,
       });
+      const lines = event.data.object.lines.data[0].price.id;
+      console.log(lines);
       if (!user) {
         res.status(404).json({ message: "No user found!" });
         return;
       }
-      user.subscription = session.subscription;
+
+      user.subscription = lines;
       await user.save();
     }
 
@@ -31,6 +38,6 @@ const StripeWebhook = async (req, res) => {
     console.error(err.message);
     res.status(400).send(`Webhook Error: ${err.message}`);
   }
-};
+});
 
-module.exports = StripeWebhook;
+module.exports = app;
