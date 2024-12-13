@@ -26,7 +26,13 @@ const saveResume = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Create a new resume
+    if (user.subscription == "Basic" && user.resumes.length >= 1) {
+      return res.status(403).json({
+        message:
+          "Upgrade to a Premium Subscription to save more than one resume.",
+      });
+    }
+
     const newResume = new resumeModel({
       clerkId,
       resumeTitle,
@@ -49,6 +55,8 @@ const saveResume = async (req, res) => {
 
     // Add the resume ID to the user's resumes array
     user.resumes.push(newResume._id);
+    // const updatedResumeBuilds = parseInt(user.totalResumeBuilds) + 1;
+    // user.totalResumeBuilds = updatedResumeBuilds.toString();
     await user.save();
 
     // Respond with success
@@ -61,7 +69,6 @@ const saveResume = async (req, res) => {
       const errors = Object.values(error.errors).map((err) => err.message);
       res.status(400).json({ message: "Validation failed", errors });
     } else {
-      // Handle general errors
       res
         .status(500)
         .json({ message: "Error saving the resume", error: error.message });

@@ -6,6 +6,7 @@ const verifyUserMiddleware = require("../middleware/VerifyUserMiddleware");
 const getResumeDetails = require("../controller/GetResumeDetails");
 const UpdateResume = require("../controller/UpdateResume");
 const DeleteResume = require("../controller/DeleteResume");
+const { IncreaseQuickBuild } = require("../controller/IncreaseQuickBuild");
 const router = express.Router();
 
 router.post("/save-resume", saveResume);
@@ -13,5 +14,6 @@ router.post("/save-resume-photo", upload.single("file"), SaveResumePhoto);
 router.get("/detail", getResumeDetails);
 router.put("/update-resume", UpdateResume);
 router.delete("/delete-resume", DeleteResume);
+router.put("/update-quick-builds", IncreaseQuickBuild);
 
 module.exports = router;

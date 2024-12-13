@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    totalResumeBuilds: {
+      type: String,
+      required: false,
+      default: "0",
+    },
     createdAt: {
       type: Date,
       default: Date.now,
